@@ -8,13 +8,14 @@ vendor:
 	git submodule update --init --recursive
 
 libAFNetworking.a: vendor
-	xcodebuild -project "./vendor/afnetworking/AFNetworking Static Library.xcodeproj" -sdk iphonesimulator -configuration Release clean build
-	xcodebuild -project "./vendor/afnetworking/AFNetworking Static Library.xcodeproj" -sdk iphoneos -configuration Release clean build
-	lipo -create -output ./vendor/afnetworking/build/libAFNetworking.a ./vendor/afnetworking/build/Release-iphoneos/libAFNetworking.a ./vendor/afnetworking/build/Release-iphonesimulator/libAFNetworking.a
-	cp ./vendor/afnetworking/build/libAFNetworking.a ./libAFNetworking.a
-
+	xcodebuild -project "./AFNetworking Static Library.xcodeproj" -sdk iphonesimulator -configuration Release clean build
+	xcodebuild -project "./AFNetworking Static Library.xcodeproj" -sdk iphoneos -configuration Release clean build
+	lipo -create -output ./build/libAFNetworking.a ./build/Release-iphoneos/libAFNetworking.a ./build/Release-iphonesimulator/libAFNetworking.a
+	cp ./build/libAFNetworking.a ./AFNetworking/libAFNetworking.a	
+	rm -r build
+	
 AFNetworking.dll: libAFNetworking.a
-	$(BTOUCH) AFNetworking/ApiDefinition.cs AFNetworking/libAFNetworking.linkwith.cs -s:AFNetworking/StructsAndEnums.cs --out=$@ --link-with=libAFNetworking.a,libAFNetworking.a
+	$(BTOUCH) AFNetworking/ApiDefinition.cs AFNetworking/libAFNetworking.linkwith.cs -s:AFNetworking/StructsAndEnums.cs --out=$@ --link-with=AFNetworking/libAFNetworking.a,libAFNetworking.a
 
 clean:
 	rm -r vendor
